@@ -24,6 +24,8 @@ namespace DrugStoreInfrastructure.Extensions
 
             //Dependancy Injection
             services.AddScoped<IAuthentication, Authentication>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IEmailService, EmailService>();
         }
     }
 }

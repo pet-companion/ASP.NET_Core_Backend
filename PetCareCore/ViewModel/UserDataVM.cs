@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace PetCareCore.ViewModel
         public bool IsEmailVerified { get; set; }
         public bool IsBlocked { get; set; }
         public AccessTokenViewModel Token { get; set; }
+        public FileData UserImage { get; set; }
     }
 
     public class AccessTokenViewModel

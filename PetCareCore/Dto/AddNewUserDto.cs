@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,6 @@ namespace PetCareCore.Dto
         public string PhoneNumber { get; set; }
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+        public IFormFile UserImage { get; set; }
     }
 }

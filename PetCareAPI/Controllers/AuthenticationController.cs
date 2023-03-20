@@ -21,7 +21,7 @@ namespace PetCareAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] AddNewUserDto userData)
+        public async Task<IActionResult> Register([FromForm] AddNewUserDto userData)
         {
             var res = await _authentication.Register(userData);
             if (res.status)

@@ -22,11 +22,15 @@ namespace PetCareInfrastructure.Services.Implementations
     {
         private readonly PetCareDbContext _dbContext;
         private readonly IMapper _Mapper;
+        private readonly IFileService _fileService;
+        private readonly IEmailService _emailService;
 
-        public Authentication(PetCareDbContext dbContext, IMapper mapper)
+        public Authentication(PetCareDbContext dbContext, IMapper mapper, IFileService fileService, IEmailService emailService)
         {
             _dbContext = dbContext;
             _Mapper = mapper;
+            _fileService = fileService;
+            _emailService = emailService;
         }
 
         public async Task<APIResponse> Register(AddNewUserDto userData)
@@ -37,8 +41,10 @@ namespace PetCareInfrastructure.Services.Implementations
                 {
                     return new APIResponse(false, "All Fields Are Required");
                 }
+                var userImg = await _fileService.SaveFile(userData.UserImage, FileFolder.FolderName);
                 var user = _Mapper.Map<User>(userData);
                 user.IsEmailVerified = true;
+                user.ImgName = string.IsNullOrWhiteSpace(userImg) ? null : userImg;
                 await _dbContext.Users.AddAsync(user);
                 await _dbContext.SaveChangesAsync();
                 return new APIResponse(true, "User Added Successfully");
@@ -51,23 +57,33 @@ namespace PetCareInfrastructure.Services.Implementations
 
         public async Task<APIResponse<UserDataVM>> Login(CredentialDataDto credentialData)
         {
-            if (credentialData is null || credentialData.Email is null || credentialData.Password is null)
+            try
             {
-                return new APIResponse<UserDataVM>(false, "All Fields Are Required", null);
+                if (credentialData is null || credentialData.Email is null || credentialData.Password is null)
+                {
+                    return new APIResponse<UserDataVM>(false, "All Fields Are Required", null);
+                }
+                var user = await _dbContext.Users
+                    .SingleOrDefaultAsync(x => x.Email == credentialData.Email && x.Password == credentialData.Password);
+                if (user is null)
+                {
+                    return new APIResponse<UserDataVM>(false, "Invalid UserName Or Password", null);
+                }
+                if (!user.IsEmailVerified)
+                {
+                    return new APIResponse<UserDataVM>(false, "Please Confirm Your Email Address", null);
+                }
+                var userData = _Mapper.Map<UserDataVM>(user);
+                userData.Token = await GenerateAccessToken(user);
+                //get user image
+                userData.UserImage = await _fileService.GetFile(user.ImgName, FileFolder.FolderName);
+                return new APIResponse<UserDataVM>(true, "Success", userData, 1);
             }
-            var user = await _dbContext.Users
-                .SingleOrDefaultAsync(x => x.Email == credentialData.Email && x.Password == credentialData.Password);
-            if (user is null)
+            catch (Exception ex)
             {
-                return new APIResponse<UserDataVM>(false, "Invalid UserName Or Password", null);
+                return new APIResponse<UserDataVM>(false, ex.Message, null, 0);
             }
-            if (!user.IsEmailVerified)
-            {
-                return new APIResponse<UserDataVM>(false, "Please Confirm Your Email Address", null);
-            }
-            var userData = _Mapper.Map<UserDataVM>(user);
-            userData.Token = await GenerateAccessToken(user);
-            return new APIResponse<UserDataVM>(true, "Success", userData, 1);
+         
         }
 
         public async Task<APIResponse<ForgotPasswordVM>> ForgotPassword(string userEmail)
@@ -85,6 +101,9 @@ namespace PetCareInfrastructure.Services.Implementations
             var randomNumber = StaticFunctionHelper.GnenrateRandomNumber();
             user.VerifiedCode = randomNumber;
             await _dbContext.SaveChangesAsync();
+            //send email to user contains verified code
+            await _emailService.SendEmail("ahmadalmikkawi123@gmail.com", "Verified Code", $"Verified Code Is: {randomNumber}");
+
             return new APIResponse<ForgotPasswordVM>(true, "Please Enter Your Verification Code To Change Password", new ForgotPasswordVM { UserEmail = userEmail, VerifiedCode = randomNumber }, 1);
         }
 

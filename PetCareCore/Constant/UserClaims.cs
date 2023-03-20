@@ -10,4 +10,8 @@ namespace PetCareCore.Constant
     {
         public const string UserId = "user_id";
     }
+    public static class FileFolder
+    {
+        public const string FolderName = "Files";
+    }
 }
