@@ -21,6 +21,10 @@ namespace PetCareInfrastructure.AutoMapper
             CreateMap<Category, CategoryVM>();
             //Product
             CreateMap<Product, ProductVM>();
+            //Store
+            CreateMap<Store, StoreVM>();
+            //Order
+            CreateMap<Order, OrderVM>();
         }
     }
 }

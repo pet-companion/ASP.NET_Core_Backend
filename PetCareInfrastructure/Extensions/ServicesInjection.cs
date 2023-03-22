@@ -30,6 +30,7 @@ namespace DrugStoreInfrastructure.Extensions
             services.AddScoped<IPetService, PetService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IStoreService, StoreService>();
         }
     }
 }

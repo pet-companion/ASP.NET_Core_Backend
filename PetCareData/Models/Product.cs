@@ -15,6 +15,7 @@ namespace PetCareData.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
+        public int Qty { get; set; }
         public string ImgName { get; set; }
         [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
@@ -22,5 +23,8 @@ namespace PetCareData.Models
         [ForeignKey(nameof(Store))]
         public int StoreId { get; set; }
         public Store Store { get; set; }
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

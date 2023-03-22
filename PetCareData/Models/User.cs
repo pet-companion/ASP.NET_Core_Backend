@@ -27,5 +27,6 @@ namespace PetCareData.Models
         public Role Role { get; set; }
         public string RoleName { get; set; }
         public List<Order> Orders { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

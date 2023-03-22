@@ -13,8 +13,8 @@ namespace PetCareData.Models
     {
         [Key]
         public int Id { get; set; }
-        public string PriceOnDemand { get; set; }
-        public string Qty { get; set; }
+        public double PriceOnDemand { get; set; }
+        public int Qty { get; set; }
         public OrderStatusEnum Status { get; set; }
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }

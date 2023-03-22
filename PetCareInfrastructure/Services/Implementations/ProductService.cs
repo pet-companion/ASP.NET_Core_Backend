@@ -58,12 +58,17 @@ namespace PetCareInfrastructure.Services.Implementations
             {
                 return new APIResponse(false, "Please Enter a Price Greater Than 0");
             }
+            if (productData.Qty < 1)
+            {
+                return new APIResponse(false, "Please Enter a Quantity Greater Than 0");
+            }
             //check if CategoryId and StoreId found
             var category = _dbContext.Categories.Find(productData.CategoryId);
             var store = _dbContext.Stores.Find(productData.StoreId);
-            if (category is null || store is null)
+            var user = _dbContext.Users.Find(productData.UserId);
+            if (category is null || store is null || user is null)
             {
-                return new APIResponse(false, "Category Or Store Not Found");
+                return new APIResponse(false, "User, Category Or Store Not Found");
             }
             //Edit
             if (productData.Id != null)
@@ -81,6 +86,7 @@ namespace PetCareInfrastructure.Services.Implementations
             product.Price = productData.Price;
             product.CategoryId = productData.CategoryId;
             product.StoreId = productData.StoreId;
+            product.UserId = productData.UserId;
 
             if (productData.ProductImg.Length > 0)
             {
