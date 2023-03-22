@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PetCareInfrastructure.Services.Interfaces
 {
-    public interface IAuthentication
+    public interface IAuthenticationService
     {
         Task<APIResponse> Register(AddNewUserDto userData);
         Task<APIResponse<UserDataVM>> Login(CredentialDataDto credentialData);

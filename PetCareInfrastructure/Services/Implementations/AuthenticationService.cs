@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace PetCareInfrastructure.Services.Implementations
 {
-    public class Authentication : IAuthentication
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly PetCareDbContext _dbContext;
         private readonly IMapper _Mapper;
         private readonly IFileService _fileService;
         private readonly IEmailService _emailService;
 
-        public Authentication(PetCareDbContext dbContext, IMapper mapper, IFileService fileService, IEmailService emailService)
+        public AuthenticationService(PetCareDbContext dbContext, IMapper mapper, IFileService fileService, IEmailService emailService)
         {
             _dbContext = dbContext;
             _Mapper = mapper;

@@ -23,9 +23,13 @@ namespace DrugStoreInfrastructure.Extensions
             services.AddAutoMapper(typeof(MapperProfileCollection).Assembly);
 
             //Dependancy Injection
-            services.AddScoped<IAuthentication, Authentication>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IBreedService, BreedService>();
+            services.AddScoped<IPetService, PetService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
         }
     }
 }

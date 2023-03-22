@@ -13,6 +13,14 @@ namespace PetCareInfrastructure.AutoMapper
             //Authentication
             CreateMap<User, UserDataVM>();
             CreateMap<AddNewUserDto, User>();
+            //Breed
+            CreateMap<Breed, BreedVM>();
+            //Pet
+            CreateMap<Pet, PetVM>();
+            //Category
+            CreateMap<Category, CategoryVM>();
+            //Product
+            CreateMap<Product, ProductVM>();
         }
     }
 }

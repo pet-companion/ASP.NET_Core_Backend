@@ -12,9 +12,9 @@ namespace PetCareAPI.Controllers
 {
     public class AuthenticationController : BaseController
     {
-        private readonly IAuthentication _authentication;
+        private readonly IAuthenticationService _authentication;
 
-        public AuthenticationController(IAuthentication authentication, IHttpContextAccessor httpContext):base(httpContext)
+        public AuthenticationController(IAuthenticationService authentication, IHttpContextAccessor httpContext):base(httpContext)
         {
             _authentication = authentication;
         }
