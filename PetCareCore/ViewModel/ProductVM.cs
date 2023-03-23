@@ -17,5 +17,6 @@ namespace PetCareCore.ViewModel
         public int StoreId { get; set; }
         public int UserId { get; set; }
         public FileData ProductImg { get; set; }
+        public string ImgName { get; set; }
     }
 }

@@ -15,5 +15,6 @@ namespace PetCareCore.Dto
         public int UserId { get; set; }
         public int BreedId { get; set; }
         public FileData PetImage { get; set; }
+        public string ImgName { get; set; }
     }
 }

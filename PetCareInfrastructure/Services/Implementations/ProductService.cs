@@ -31,6 +31,10 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var productList = await _dbContext.Products.ToListAsync();
             var productVM = _Mapper.Map<List<ProductVM>>(productList);
+            foreach (var product in productVM)
+            {
+                product.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
+            }
             return new APIResponse<List<ProductVM>>(true, "All Product List", productVM, productVM.Count());
         }
 
@@ -43,6 +47,7 @@ namespace PetCareInfrastructure.Services.Implementations
                 return new APIResponse<ProductVM>(false, "Product Not Found", null, 0);
             }
             var productVM = _Mapper.Map<ProductVM>(product);
+            productVM.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
             return new APIResponse<ProductVM>(true, "Product Data", productVM, 1);
         }
 

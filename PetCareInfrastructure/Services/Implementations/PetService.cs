@@ -31,6 +31,10 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var petList = await _dbContext.Pets.ToListAsync();
             var petVM = _Mapper.Map<List<PetVM>>(petList);
+            foreach (var pet in petVM)
+            {
+                pet.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
+            }
             return new APIResponse<List<PetVM>>(true, "All Pet List", petVM, petVM.Count());
         }
 
@@ -43,6 +47,7 @@ namespace PetCareInfrastructure.Services.Implementations
                 return new APIResponse<PetVM>(false, "Pet Not Found", null, 0);
             }
             var petVM = _Mapper.Map<PetVM>(pet);
+            petVM.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
             return new APIResponse<PetVM>(true, "Pet Data", petVM, 1);
         }
 
