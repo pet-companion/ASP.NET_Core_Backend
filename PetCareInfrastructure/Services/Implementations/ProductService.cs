@@ -91,9 +91,10 @@ namespace PetCareInfrastructure.Services.Implementations
             product.Price = productData.Price;
             product.CategoryId = productData.CategoryId;
             product.StoreId = productData.StoreId;
+            product.Qty = productData.Qty;
             product.UserId = productData.UserId;
 
-            if (productData.ProductImg.Length > 0)
+            if (productData.ProductImg?.Length > 0)
             {
                 product.ImgName = await _fileService.SaveFile(productData.ProductImg, FileFolder.FolderName);
             }

@@ -31,6 +31,7 @@ namespace DrugStoreInfrastructure.Extensions
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStoreService, StoreService>();
+            services.AddScoped<IOrderService, OrderService>();
         }
     }
 }

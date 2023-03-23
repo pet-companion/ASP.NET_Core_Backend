@@ -71,6 +71,7 @@ namespace PetCareInfrastructure.Services.Implementations
             store.Address = storeData.Address;
             store.PhoneNumber = storeData.PhoneNumber;
             store.Email = storeData.Email;
+            store.UserId = storeData.UserId;
             if (storeData.Id == null)
             {
                 await _dbContext.Stores.AddAsync(store);

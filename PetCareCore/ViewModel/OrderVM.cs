@@ -14,5 +14,6 @@ namespace PetCareCore.ViewModel
         public string Status { get; set; }
         public int UserId { get; set; }
         public int ProductId { get; set; }
+        public float TotalAmount { get; set; }
     }
 }

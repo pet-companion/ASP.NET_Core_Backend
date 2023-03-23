@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Data;
 using PetCareData.Models;
@@ -72,6 +73,7 @@ namespace PetCareInfrastructure.Services.Implementations
                     return new APIResponse(false, "Order Not Found");
                 }
                 product.LastUpdatedAt = DateTime.Now;
+                order.LastUpdatedAt = DateTime.Now;
                 msg = "Order Updated Successfully";
                 //Calc Product Qty
                 discountQty = orderData.Qty - order.Qty;
@@ -82,7 +84,10 @@ namespace PetCareInfrastructure.Services.Implementations
                 return new APIResponse(true, $"There is not enough product, the remaining quantity is: {product.Qty}");
             }
             product.Qty = product.Qty - discountQty;
+
             order.Qty = orderData.Qty;
+            order.PriceOnDemand = product.Price;
+            order.Status = OrderStatusEnum.Pending;
             order.UserId = orderData.UserId;
             order.ProductId = orderData.ProductId;
             if (orderData.Id == null)

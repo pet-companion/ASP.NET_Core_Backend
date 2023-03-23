@@ -82,7 +82,7 @@ namespace PetCareInfrastructure.Services.Implementations
             pet.UserId = petData.UserId;
             pet.BreedId = petData.BreedId;
 
-            if (petData.PetImg.Length > 0)
+            if (petData.PetImg?.Length > 0)
             {
                 pet.ImgName = await _fileService.SaveFile(petData.PetImg, FileFolder.FolderName);
             }

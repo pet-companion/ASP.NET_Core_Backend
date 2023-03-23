@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Models;
 using System;
@@ -24,7 +25,9 @@ namespace PetCareInfrastructure.AutoMapper
             //Store
             CreateMap<Store, StoreVM>();
             //Order
-            CreateMap<Order, OrderVM>();
+            CreateMap<Order, OrderVM>()
+                .ForMember(vm => vm.Status, m => m.MapFrom(x => x.Status.ToDisplayName()))
+                .ForMember(vm => vm.TotalAmount, m => m.MapFrom(x => x.Qty * x.PriceOnDemand));
         }
     }
 }
