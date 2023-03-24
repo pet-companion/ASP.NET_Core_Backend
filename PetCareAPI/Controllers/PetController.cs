@@ -41,7 +41,7 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdatePet([FromForm] AddUpdatePetDto petData)
+        public async Task<IActionResult> AddPet([FromForm] AddUpdatePetDto petData)
         {
             var res = await _petService.AddUpdatePet(petData);
             if (res.status)
@@ -51,7 +51,18 @@ namespace PetCareAPI.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet]
+        [HttpPut]
+        public async Task<IActionResult> UpdatePet([FromForm] AddUpdatePetDto petData)
+        {
+            var res = await _petService.AddUpdatePet(petData);
+            if (res.status)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> DeletePet(int petId)
         {
             var res = await _petService.DeletePet(petId);

@@ -41,7 +41,7 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdateCategory([FromBody] AddUpdateCategoryDto categoryData)
+        public async Task<IActionResult> AddCategory([FromBody] AddUpdateCategoryDto categoryData)
         {
             var res = await _categoryService.AddUpdateCategory(categoryData);
             if (res.status)
@@ -51,7 +51,18 @@ namespace PetCareAPI.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet]
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategory([FromBody] AddUpdateCategoryDto categoryData)
+        {
+            var res = await _categoryService.AddUpdateCategory(categoryData);
+            if (res.status)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             var res = await _categoryService.DeleteCategory(categoryId);

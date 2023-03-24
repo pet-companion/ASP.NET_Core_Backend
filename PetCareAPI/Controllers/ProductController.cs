@@ -41,7 +41,7 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdateProduct([FromForm] AddUpdateProductDto productData)
+        public async Task<IActionResult> AddProduct([FromForm] AddUpdateProductDto productData)
         {
             var res = await _productService.AddUpdateProduct(productData);
             if (res.status)
@@ -51,7 +51,18 @@ namespace PetCareAPI.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet]
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct([FromForm] AddUpdateProductDto productData)
+        {
+            var res = await _productService.AddUpdateProduct(productData);
+            if (res.status)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> DeleteProduct(int productId)
         {
             var res = await _productService.DeleteProduct(productId);

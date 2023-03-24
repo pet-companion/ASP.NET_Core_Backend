@@ -41,7 +41,7 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdateStore([FromBody] AddUpdateStoreDto storeData)
+        public async Task<IActionResult> AddStore([FromBody] AddUpdateStoreDto storeData)
         {
             var res = await _storeService.AddUpdateStore(storeData);
             if (res.status)
@@ -51,7 +51,18 @@ namespace PetCareAPI.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet]
+        [HttpPut]
+        public async Task<IActionResult> UpdateStore([FromBody] AddUpdateStoreDto storeData)
+        {
+            var res = await _storeService.AddUpdateStore(storeData);
+            if (res.status)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> DeleteStore(int storeId)
         {
             var res = await _storeService.DeleteStore(storeId);

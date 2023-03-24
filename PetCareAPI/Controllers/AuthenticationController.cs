@@ -56,7 +56,7 @@ namespace PetCareAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] ForgotPasswordDto userData)
         {
             var res = await _authentication.ChangePassword(userData);

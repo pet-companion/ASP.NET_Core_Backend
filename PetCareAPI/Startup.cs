@@ -90,7 +90,9 @@ namespace PetCareAPI
                      ValidateAudience = true,
                      ValidateIssuerSigningKey = true,
                      ValidIssuer = "https://localhost:44317/",
+                     //ValidIssuer = "http://ahmedalmikkawi-001-site1.ftempurl.com/",
                      ValidAudience = "https://localhost:44317/",
+                     //ValidAudience = "http://ahmedalmikkawi-001-site1.ftempurl.com/",
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("djksjkccyjkdvujkksasjscyddnagwui")),
                      ClockSkew = TimeSpan.Zero,//To Make Token UnValid When Finish Expire Date
                      ValidateLifetime = true,

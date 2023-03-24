@@ -40,7 +40,7 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdateOrder([FromBody] AddUpdateOrderDto orderData)
+        public async Task<IActionResult> AddOrder([FromBody] AddUpdateOrderDto orderData)
         {
             var res = await _orderService.AddUpdateOrder(orderData);
             if (res.status)
@@ -50,7 +50,18 @@ namespace PetCareAPI.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet]
+        [HttpPut]
+        public async Task<IActionResult> UpdateOrder([FromBody] AddUpdateOrderDto orderData)
+        {
+            var res = await _orderService.AddUpdateOrder(orderData);
+            if (res.status)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
             var res = await _orderService.DeleteOrder(orderId);
