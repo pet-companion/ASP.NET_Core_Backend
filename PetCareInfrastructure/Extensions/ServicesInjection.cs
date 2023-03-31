@@ -25,8 +25,6 @@ namespace DrugStoreInfrastructure.Extensions
             services.AddAutoMapper(typeof(MapperProfileCollection).Assembly);
 
             //Dependancy Injection
-            services.AddSingleton<IAuthorizationMiddlewareResultHandler,
-            MyAuthorizationMiddlewareResultHandler>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IEmailService, EmailService>();

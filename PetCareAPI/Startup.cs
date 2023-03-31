@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetCareCore.ViewModel;
+using PetCareInfrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,18 +115,9 @@ namespace PetCareAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetCareAPI v1"));
             }
 
-            //Return a 404 to make it appear as if the resource does not exist.
-            app.Use(async (context, next) =>
-            {
-                await next();
-                if (context.Response.StatusCode == 404)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    await context.Response.WriteAsJsonAsync(new APIResponse(false, "Page not found."));
-                    return;
-                }
-            });
-
+            //Middelware to handler http requests
+            app.HttpRequestHandler();
+           
             app.UseHttpsRedirection();
 
             app.UseRouting();
