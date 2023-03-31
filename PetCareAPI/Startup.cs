@@ -2,6 +2,7 @@ using DrugStoreInfrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,9 +11,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PetCareCore.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -89,10 +92,10 @@ namespace PetCareAPI
                      ValidateIssuer = true,
                      ValidateAudience = true,
                      ValidateIssuerSigningKey = true,
-                     ValidIssuer = "https://localhost:44317/",
-                     //ValidIssuer = "http://ahmedalmikkawi-001-site1.ftempurl.com/",
-                     ValidAudience = "https://localhost:44317/",
-                     //ValidAudience = "http://ahmedalmikkawi-001-site1.ftempurl.com/",
+                     //ValidIssuer = "https://localhost:44317/",
+                     ValidIssuer = "http://petcompanion-001-site1.atempurl.com/",
+                     //ValidAudience = "https://localhost:44317/",
+                     ValidAudience = "http://petcompanion-001-site1.atempurl.com/",
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("djksjkccyjkdvujkksasjscyddnagwui")),
                      ClockSkew = TimeSpan.Zero,//To Make Token UnValid When Finish Expire Date
                      ValidateLifetime = true,
@@ -110,6 +113,18 @@ namespace PetCareAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetCareAPI v1"));
             }
+
+            //Return a 404 to make it appear as if the resource does not exist.
+            app.Use(async (context, next) =>
+            {
+                await next();
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    await context.Response.WriteAsJsonAsync(new APIResponse(false, "Page not found."));
+                    return;
+                }
+            });
 
             app.UseHttpsRedirection();
 

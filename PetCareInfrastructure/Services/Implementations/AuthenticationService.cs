@@ -136,8 +136,8 @@ namespace PetCareInfrastructure.Services.Implementations
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("djksjkccyjkdvujkksasjscyddnagwui"));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(30);
-            var accessToken = new JwtSecurityToken("https://localhost:44317/" /*"http://ahmedalmikkawi-001-site1.ftempurl.com/"*/,
-                "https://localhost:44317/"/* "http://ahmedalmikkawi-001-site1.ftempurl.com/"*/,
+            var accessToken = new JwtSecurityToken(/*"https://localhost:44317/"*/ "http://petcompanion-001-site1.atempurl.com/",
+                /*"https://localhost:44317/"*/ "http://petcompanion-001-site1.atempurl.com/",
             claims,
             expires: expires,
             signingCredentials: credentials

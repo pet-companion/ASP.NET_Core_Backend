@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PetCareData.Data;
 using PetCareInfrastructure.AutoMapper;
+using PetCareInfrastructure.Helpers;
 using PetCareInfrastructure.Services.Implementations;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
@@ -23,6 +25,8 @@ namespace DrugStoreInfrastructure.Extensions
             services.AddAutoMapper(typeof(MapperProfileCollection).Assembly);
 
             //Dependancy Injection
+            services.AddSingleton<IAuthorizationMiddlewareResultHandler,
+            MyAuthorizationMiddlewareResultHandler>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IEmailService, EmailService>();
