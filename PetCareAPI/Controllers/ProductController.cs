@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetProductList()
         {
             var res = await _productService.GetProductList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -33,7 +34,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetProduct(int productId)
         {
             var res = await _productService.GetProduct(productId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -41,10 +42,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct([FromForm] AddUpdateProductDto productData)
+        public async Task<IActionResult> AddProduct([FromForm] AddProductDto productData)
         {
-            var res = await _productService.AddUpdateProduct(productData);
-            if (res.status)
+            var res = await _productService.AddProduct(productData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -52,10 +53,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct([FromForm] AddUpdateProductDto productData)
+        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductDto productData)
         {
-            var res = await _productService.AddUpdateProduct(productData);
-            if (res.status)
+            var res = await _productService.UpdateProduct(productData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -66,7 +67,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeleteProduct(int productId)
         {
             var res = await _productService.DeleteProduct(productId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

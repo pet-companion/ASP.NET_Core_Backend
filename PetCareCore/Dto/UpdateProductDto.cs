@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace PetCareCore.Dto
 {
-    public class AddUpdatePetDto
+    public class UpdateProductDto
     {
         public int? Id { get; set; }
         public string Name { get; set; }
-        public double? Weight { get; set; }
+        public string Description { get; set; }
+        public double Price { get; set; }
+        public int Qty { get; set; }
+        public int CategoryId { get; set; }
+        public int StoreId { get; set; }
         public int UserId { get; set; }
-        public int BreedId { get; set; }
-        public IFormFile PetImg { get; set; }
+        public IFormFile ProductImg { get; set; }
     }
 }

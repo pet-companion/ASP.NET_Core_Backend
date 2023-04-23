@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetStoreList()
         {
             var res = await _storeService.GetStoreList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -33,7 +34,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetStore(int storeId)
         {
             var res = await _storeService.GetStore(storeId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -41,10 +42,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddStore([FromBody] AddUpdateStoreDto storeData)
+        public async Task<IActionResult> AddStore([FromBody] AddStoreDto storeData)
         {
-            var res = await _storeService.AddUpdateStore(storeData);
-            if (res.status)
+            var res = await _storeService.AddStore(storeData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -52,10 +53,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateStore([FromBody] AddUpdateStoreDto storeData)
+        public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreDto storeData)
         {
-            var res = await _storeService.AddUpdateStore(storeData);
-            if (res.status)
+            var res = await _storeService.UpdateStore(storeData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -66,7 +67,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeleteStore(int storeId)
         {
             var res = await _storeService.DeleteStore(storeId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

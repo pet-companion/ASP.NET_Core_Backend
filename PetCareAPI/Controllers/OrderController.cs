@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetOrderList()
         {
             var res = await _orderService.GetOrderList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -32,7 +33,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetOrder(int orderId)
         {
             var res = await _orderService.GetOrder(orderId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -40,10 +41,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrder([FromBody] AddUpdateOrderDto orderData)
+        public async Task<IActionResult> AddOrder([FromBody] AddOrderDto orderData)
         {
-            var res = await _orderService.AddUpdateOrder(orderData);
-            if (res.status)
+            var res = await _orderService.AddOrder(orderData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -51,10 +52,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateOrder([FromBody] AddUpdateOrderDto orderData)
+        public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderDto orderData)
         {
-            var res = await _orderService.AddUpdateOrder(orderData);
-            if (res.status)
+            var res = await _orderService.UpdateOrder(orderData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -65,7 +66,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
             var res = await _orderService.DeleteOrder(orderId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

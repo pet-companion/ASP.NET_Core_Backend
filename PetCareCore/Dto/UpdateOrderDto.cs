@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PetCareCore.Dto
 {
-    public class AddUpdateOrderDto
+    public class UpdateOrderDto
     {
         public int? Id { get; set; }
         public int Qty { get; set; }

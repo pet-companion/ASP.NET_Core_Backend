@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Data;
 using PetCareData.Models;
@@ -8,6 +9,7 @@ using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +30,7 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var storeList = await _dbContext.Stores.ToListAsync();
             var storeVM = _Mapper.Map<List<StoreVM>>(storeList);
-            return new APIResponse<List<StoreVM>>(true, "All Stores Data", storeVM, storeVM.Count());
+            return new APIResponse<List<StoreVM>>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Stores List", storeVM.Count(), storeVM);
         }
 
         public async Task<APIResponse<StoreVM>> GetStore(int storeId)
@@ -37,48 +39,48 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(storeId);
             if (store is null)
             {
-                return new APIResponse<StoreVM>(false, "Store Not Found", null, 0);
+                return new APIResponse<StoreVM>(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Store Not Found", null);
             }
             var storeVM = _Mapper.Map<StoreVM>(store);
-            return new APIResponse<StoreVM>(true, "Store Data", storeVM, 1);
+            return new APIResponse<StoreVM>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Store Data", 1, storeVM);
         }
 
-        public async Task<APIResponse> AddUpdateStore(AddUpdateStoreDto storeData)
+        public async Task<APIResponse> AddStore(AddStoreDto storeData)
         {
-            var store = new Store();
-            var msg = string.Empty;
             if (storeData is null || string.IsNullOrWhiteSpace(storeData.Name) || string.IsNullOrWhiteSpace(storeData.Address) || string.IsNullOrWhiteSpace(storeData.PhoneNumber) || string.IsNullOrWhiteSpace(storeData.Email))
             {
-                return new APIResponse(false, "All Fields Are Required"); 
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
             }
             var user = _dbContext.Users.Find(storeData.UserId);
             if (user is null)
             {
-                return new APIResponse(false, "User Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User Not Found");
             }
-            //Edit
-            if (storeData.Id != null)
-            {
-                store = await _dbContext.Stores.FindAsync(storeData.Id);
-                if (store is null)
-                {
-                    return new APIResponse(false, "Store Not Found");
-                }
-                store.LastUpdatedAt = DateTime.Now;
-                msg = "Store Updated Successfully";
-            }
-            store.Name = storeData.Name;
-            store.Address = storeData.Address;
-            store.PhoneNumber = storeData.PhoneNumber;
-            store.Email = storeData.Email;
-            store.UserId = storeData.UserId;
-            if (storeData.Id == null)
-            {
-                await _dbContext.Stores.AddAsync(store);
-                msg = "Store Added Successfully";
-            }
+            var store = _Mapper.Map<Store>(storeData);
+            await _dbContext.Stores.AddAsync(store);
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, msg);
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Store Added Successfully");
+        }
+
+        public async Task<APIResponse> UpdateStore(UpdateStoreDto storeData)
+        {
+            if (storeData is null || storeData.Id is null || string.IsNullOrWhiteSpace(storeData.Name) || string.IsNullOrWhiteSpace(storeData.Address) || string.IsNullOrWhiteSpace(storeData.PhoneNumber) || string.IsNullOrWhiteSpace(storeData.Email))
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
+            }
+            var user = _dbContext.Users.Find(storeData.UserId);
+            if (user is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User Not Found");
+            }
+            var dbStore = await _dbContext.Stores.FindAsync(storeData.Id);
+            if (dbStore is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Store Not Found");
+            }
+             _Mapper.Map(storeData, dbStore);
+            await _dbContext.SaveChangesAsync();
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Store Updated Successfully");
         }
 
         public async Task<APIResponse> DeleteStore(int storeId)
@@ -87,11 +89,11 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(storeId);
             if (store is null)
             {
-                return new APIResponse(false, "Store Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Store Not Found");
             }
             store.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, "Store Deleted Successfully");
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Store Deleted Successfully");
         }
     }
 }

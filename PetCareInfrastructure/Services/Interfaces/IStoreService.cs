@@ -12,7 +12,8 @@ namespace PetCareInfrastructure.Services.Interfaces
     {
         Task<APIResponse<List<StoreVM>>> GetStoreList();
         Task<APIResponse<StoreVM>> GetStore(int storeId);
-        Task<APIResponse> AddUpdateStore(AddUpdateStoreDto storeData);
+        Task<APIResponse> AddStore(AddStoreDto storeData);
+        Task<APIResponse> UpdateStore(UpdateStoreDto storeData);
         Task<APIResponse> DeleteStore(int storeId);
     }
 }

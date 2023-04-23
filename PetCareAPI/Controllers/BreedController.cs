@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetBreedList()
         {
             var res = await _breedService.GetBreedList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -33,7 +34,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetBreed(int breedId)
         {
             var res = await _breedService.GetBreed(breedId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -41,10 +42,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBreed([FromBody] AddUpdaetBreedDto breedData)
+        public async Task<IActionResult> AddBreed([FromBody] AddBreedDto breedData)
         {
-            var res = await _breedService.AddUpdateBreed(breedData);
-            if (res.status)
+            var res = await _breedService.AddBreed(breedData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -52,10 +53,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateBreed([FromBody] AddUpdaetBreedDto breedData)
+        public async Task<IActionResult> UpdateBreed([FromBody] UpdateBreedDto breedData)
         {
-            var res = await _breedService.AddUpdateBreed(breedData);
-            if (res.status)
+            var res = await _breedService.UpdateBreed(breedData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -66,7 +67,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeleteBreed(int breedId)
         {
             var res = await _breedService.DeleteBreed(breedId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

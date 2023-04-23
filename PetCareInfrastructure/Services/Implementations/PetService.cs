@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PetCareCore.Constant;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Data;
 using PetCareData.Models;
@@ -9,6 +10,7 @@ using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,11 +33,11 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var petList = await _dbContext.Pets.ToListAsync();
             var petVM = _Mapper.Map<List<PetVM>>(petList);
-            foreach (var pet in petVM)
-            {
-                pet.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
-            }
-            return new APIResponse<List<PetVM>>(true, "All Pet List", petVM, petVM.Count());
+            //foreach (var pet in petVM)
+            //{
+            //    pet.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
+            //}
+            return new APIResponse<List<PetVM>>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Pets List", petVM.Count(), petVM);
         }
 
         public async Task<APIResponse<PetVM>> GetPet(int petId)
@@ -44,56 +46,62 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(petId);
             if (pet is null)
             {
-                return new APIResponse<PetVM>(false, "Pet Not Found", null, 0);
+                return new APIResponse<PetVM>(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Pet Not Found", null);
             }
             var petVM = _Mapper.Map<PetVM>(pet);
-            petVM.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
-            return new APIResponse<PetVM>(true, "Pet Data", petVM, 1);
+            //petVM.PetImage = await _fileService.GetFile(pet.ImgName, FileFolder.FolderName);
+            return new APIResponse<PetVM>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Pet Data", 1, petVM);
         }
 
-        public async Task<APIResponse> AddUpdatePet(AddUpdatePetDto petData)
+        public async Task<APIResponse> AddPet(AddPetDto petData)
         {
-            var pet = new Pet();
-            var msg = string.Empty;
             if (petData is null || string.IsNullOrWhiteSpace(petData.Name) || petData.UserId == 0 || petData.BreedId == 0)
             {
-                return new APIResponse(false, "All Fields Are Required");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
             }
             //check if UserId and BreedId found
             var user = _dbContext.Users.Find(petData.UserId);
             var breed = _dbContext.Breeds.Find(petData.BreedId);
             if (user is null || breed is null)
             {
-                return new APIResponse(false, "User Or Breed Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User Or Breed Not Found");
             }
-            //Edit
-            if (petData.Id != null)
-            {
-                pet = await _dbContext.Pets.FindAsync(petData.Id);
-                if (pet is null)
-                {
-                    return new APIResponse(false, "Pet Not Found");
-                }
-                pet.LastUpdatedAt = DateTime.Now;
-                msg = "Pet Updated Successfully";
-            }
-            pet.Name = petData.Name;
-            pet.Weight = petData.Weight;
-            pet.UserId = petData.UserId;
-            pet.BreedId = petData.BreedId;
-
+            var pet = _Mapper.Map<Pet>(petData);
             if (petData.PetImg?.Length > 0)
             {
                 pet.ImgName = await _fileService.SaveFile(petData.PetImg, FileFolder.FolderName);
             }
+            await _dbContext.Pets.AddAsync(pet);
+            await _dbContext.SaveChangesAsync();
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Pet Data Added Successfully");
+        }
 
-            if (petData.Id == null)
+        public async Task<APIResponse> UpdatePet(UpdatePetDto petData)
+        {
+            if (petData is null || petData.Id is null || string.IsNullOrWhiteSpace(petData.Name) || petData.UserId == 0 || petData.BreedId == 0)
             {
-                await _dbContext.Pets.AddAsync(pet);
-                msg = "Pet Added Successfully";
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
+            }
+            //check if UserId and BreedId found
+            var user = _dbContext.Users.Find(petData.UserId);
+            var breed = _dbContext.Breeds.Find(petData.BreedId);
+            if (user is null || breed is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User Or Breed Not Found");
+            }
+            var dbPet = await _dbContext.Pets.FindAsync(petData.Id);
+            if (dbPet is null)
+            {
+                return new APIResponse<StoreVM>(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Pet Not Found", null);
+            }
+            _Mapper.Map(petData, dbPet);
+
+            if (petData.PetImg?.Length > 0)
+            {
+                dbPet.ImgName = await _fileService.SaveFile(petData.PetImg, FileFolder.FolderName);
             }
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, msg);
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Pet Data Updated Successfully");
         }
 
         public async Task<APIResponse> DeletePet(int petId)
@@ -102,11 +110,11 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(petId);
             if (pet is null)
             {
-                return new APIResponse(false, "Pet Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Pet Not Found");
             }
             pet.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, "Pet Deleted Successfully");
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Pet Data Deleted Successfully");
         }
     }
 }

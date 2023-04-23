@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PetCareCore.Constant;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Data;
 using PetCareData.Models;
@@ -9,6 +10,7 @@ using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,11 +33,11 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var productList = await _dbContext.Products.ToListAsync();
             var productVM = _Mapper.Map<List<ProductVM>>(productList);
-            foreach (var product in productVM)
-            {
-                product.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
-            }
-            return new APIResponse<List<ProductVM>>(true, "All Product List", productVM, productVM.Count());
+            //foreach (var product in productVM)
+            //{
+            //    product.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
+            //}
+            return new APIResponse<List<ProductVM>>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Products List", productVM.Count(), productVM);
         }
 
         public async Task<APIResponse<ProductVM>> GetProduct(int productId)
@@ -44,68 +46,79 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(productId);
             if (product is null)
             {
-                return new APIResponse<ProductVM>(false, "Product Not Found", null, 0);
+                return new APIResponse<ProductVM>(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Product Not Found", null);
             }
             var productVM = _Mapper.Map<ProductVM>(product);
-            productVM.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
-            return new APIResponse<ProductVM>(true, "Product Data", productVM, 1);
+            //productVM.ProductImg = await _fileService.GetFile(product.ImgName, FileFolder.FolderName);
+            return new APIResponse<ProductVM>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Product Data", 1, productVM);
         }
 
-        public async Task<APIResponse> AddUpdateProduct(AddUpdateProductDto productData)
+        public async Task<APIResponse> AddProduct(AddProductDto productData)
         {
-            var product = new Product();
-            var msg = string.Empty;
             if (productData is null || string.IsNullOrWhiteSpace(productData.Name) || string.IsNullOrWhiteSpace(productData.Description))
             {
-                return new APIResponse(false, "All Fields Are Required");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
             }
             if (productData.Price < 1)
             {
-                return new APIResponse(false, "Please Enter a Price Greater Than 0");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Please Enter a Price Greater Than 0");
             }
             if (productData.Qty < 1)
             {
-                return new APIResponse(false, "Please Enter a Quantity Greater Than 0");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Please Enter a Quantity Greater Than 0");
             }
-            //check if CategoryId and StoreId found
+            //check if CategoryId, userId and StoreId is found
             var category = _dbContext.Categories.Find(productData.CategoryId);
             var store = _dbContext.Stores.Find(productData.StoreId);
             var user = _dbContext.Users.Find(productData.UserId);
             if (category is null || store is null || user is null)
             {
-                return new APIResponse(false, "User, Category Or Store Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User, Category Or Store Not Found");
             }
-            //Edit
-            if (productData.Id != null)
-            {
-                product = await _dbContext.Products.FindAsync(productData.Id);
-                if (product is null)
-                {
-                    return new APIResponse(false, "Product Not Found");
-                }
-                product.LastUpdatedAt = DateTime.Now;
-                msg = "Product Updated Successfully";
-            }
-            product.Name = productData.Name;
-            product.Description = productData.Description;
-            product.Price = productData.Price;
-            product.CategoryId = productData.CategoryId;
-            product.StoreId = productData.StoreId;
-            product.Qty = productData.Qty;
-            product.UserId = productData.UserId;
-
+            var product = _Mapper.Map<Product>(productData);
             if (productData.ProductImg?.Length > 0)
             {
                 product.ImgName = await _fileService.SaveFile(productData.ProductImg, FileFolder.FolderName);
             }
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Product Added Successfully");
+        }
 
-            if (productData.Id == null)
+        public async Task<APIResponse> UpdateProduct(UpdateProductDto productData)
+        {
+            if (productData is null || productData.Id is null || string.IsNullOrWhiteSpace(productData.Name) || string.IsNullOrWhiteSpace(productData.Description))
             {
-                await _dbContext.Products.AddAsync(product);
-                msg = "Product Added Successfully";
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "All Fields Are Required");
+            }
+            if (productData.Price < 1)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Please Enter a Price Greater Than 0");
+            }
+            if (productData.Qty < 1)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Please Enter a Quantity Greater Than 0");
+            }
+            //check if CategoryId, userId and StoreId is found
+            var category = _dbContext.Categories.Find(productData.CategoryId);
+            var store = _dbContext.Stores.Find(productData.StoreId);
+            var user = _dbContext.Users.Find(productData.UserId);
+            if (category is null || store is null || user is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "User, Category Or Store Not Found");
+            }
+            var product = await _dbContext.Products.FindAsync(productData.Id);
+            if (product is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Product Not Found");
+            }
+            _Mapper.Map(productData, product);
+            if (productData.ProductImg?.Length > 0)
+            {
+                product.ImgName = await _fileService.SaveFile(productData.ProductImg, FileFolder.FolderName);
             }
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, msg);
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Product Updated Successfully");
         }
 
         public async Task<APIResponse> DeleteProduct(int productId)
@@ -114,11 +127,11 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(productId);
             if (product is null)
             {
-                return new APIResponse(false, "Product Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Product Not Found");
             }
             product.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, "Product Deleted Successfully");
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Product Deleted Successfully");
         }
     }
 }

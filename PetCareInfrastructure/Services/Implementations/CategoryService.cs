@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareCore.ViewModel;
 using PetCareData.Data;
 using PetCareData.Models;
@@ -8,6 +9,7 @@ using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +30,7 @@ namespace PetCareInfrastructure.Services.Implementations
         {
             var categoryList = await _dbContext.Categories.ToListAsync();
             var categoryVM = _Mapper.Map<List<CategoryVM>>(categoryList);
-            return new APIResponse<List<CategoryVM>>(true, "All Categories", categoryVM, categoryVM.Count());
+            return new APIResponse<List<CategoryVM>>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Products Categories", categoryVM.Count(), categoryVM);
         }
 
         public async Task<APIResponse<CategoryVM>> GetCategory(int categoryId)
@@ -37,39 +39,39 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(categoryId);
             if (category is null)
             {
-                return new APIResponse<CategoryVM>(false, "Category Not Found", null, 0);
+                return new APIResponse<CategoryVM>(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Category Not Found", null);
             }
             var categoryVM = _Mapper.Map<CategoryVM>(category);
-            return new APIResponse<CategoryVM>(true, "Category Data", categoryVM, 1);
+            return new APIResponse<CategoryVM>(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Category Data", 1, categoryVM);
         }
 
-        public async Task<APIResponse> AddUpdateCategory(AddUpdateCategoryDto categoryData)
+        public async Task<APIResponse> AddCategory(AddCategoryDto categoryData)
         {
             var category = new Category();
-            var msg = string.Empty;
             if (categoryData is null || string.IsNullOrWhiteSpace(categoryData.Name))
             {
-                return new APIResponse(false, "Category Name Is Required");
-            }
-            //Edit
-            if (categoryData.Id != null)
-            {
-                category = await _dbContext.Categories.FindAsync(categoryData.Id);
-                if (category is null)
-                {
-                    return new APIResponse(false, "Category Not Found");
-                }
-                category.LastUpdatedAt = DateTime.Now;
-                msg = "Category Updated Successfully";
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Category Name Is Required");
             }
             category.Name = categoryData.Name;
-            if (categoryData.Id == null)
-            {
-                await _dbContext.Categories.AddAsync(category);
-                msg = "Category Added Successfully";
-            }
+            await _dbContext.Categories.AddAsync(category);
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, msg);
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Category Added Successfully");
+        }
+
+        public async Task<APIResponse> UpdateCategory(UpdateCategoryDto categoryData)
+        {
+            if (categoryData is null || string.IsNullOrWhiteSpace(categoryData.Name))
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Category Name Is Required");
+            }
+            var category = await _dbContext.Categories.FindAsync(categoryData.Id);
+            if (category is null)
+            {
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Category Not Found");
+            }
+            category.Name = categoryData.Name;
+            await _dbContext.SaveChangesAsync();
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Category Updated Successfully");
         }
 
         public async Task<APIResponse> DeleteCategory(int categoryId)
@@ -78,11 +80,11 @@ namespace PetCareInfrastructure.Services.Implementations
                 .FindAsync(categoryId);
             if (category is null)
             {
-                return new APIResponse(false, "Category Not Found");
+                return new APIResponse(StatusMessageEnum.Failed.ToDisplayName(), (int)HttpStatusCode.BadRequest, "Category Not Found");
             }
             category.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
-            return new APIResponse(true, "Category Deleted Successfully");
+            return new APIResponse(StatusMessageEnum.Success.ToDisplayName(), (int)HttpStatusCode.OK, "Category Deleted Successfully");
         }
     }
 }

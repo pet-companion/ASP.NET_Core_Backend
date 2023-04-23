@@ -8,29 +8,24 @@ namespace PetCareCore.ViewModel
 {
     public class APIResponse
     {
-        public bool status { get; set; }
-        public string message { get; set; }
-        public List<string> errorlist { get; set; }
-        public Exception Exception { get; set; }
+        public string Status { get; set; }
+        public int StatusCode { get; set; }
+        public string Message { get; set; }
+        public string ExceptionMessage { get; set; }
 
-        public APIResponse(bool status, string message, List<string> errorlist, Exception exception)
+        public APIResponse(string status, int statusCode, string message, string exceptionMessage)
         {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
-            Exception = exception;
+            Status = status;
+            StatusCode = statusCode;
+            Message = message;
+            ExceptionMessage = exceptionMessage;
         }
-        public APIResponse(bool status, string message, List<string> errorlist)
+
+        public APIResponse(string status, int statusCode, string message)
         {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
-        }
-        public APIResponse(bool status, string message)
-        {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
+            Status = status;
+            StatusCode = statusCode;
+            Message = message;
         }
         public APIResponse()
         {
@@ -41,36 +36,29 @@ namespace PetCareCore.ViewModel
         public T Data { get; set; }
         public int TotalRecords { get; set; }
 
-        public APIResponse(bool status, string message, List<string> errorlist, Exception exception, T data, int totalRecords)
+        public APIResponse(string status, int statusCode, string message, int totalRecords, T data)
         {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
-            this.Exception = exception;
-            Data = data;
+            Status = status;
+            StatusCode = statusCode;
+            Message = message;
             TotalRecords = totalRecords;
-        }
-        public APIResponse(bool status, string message, List<string> errorlist, T data, int totalRecords)
-        {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
             Data = data;
-            TotalRecords = totalRecords;
         }
-        public APIResponse(bool status, string message, T data, int totalRecords)
+
+        public APIResponse(string status, int statusCode, string message, string exceptionMessage, T data)
         {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
+            Status = status;
+            StatusCode = statusCode;
+            Message = message;
+            ExceptionMessage = exceptionMessage;
             Data = data;
-            TotalRecords = totalRecords;
         }
-        public APIResponse(bool status, string message, T data)
+
+        public APIResponse(string status, int statusCode, string message, T data)
         {
-            this.status = status;
-            this.message = message;
-            this.errorlist = errorlist;
+            Status = status;
+            StatusCode = statusCode;
+            Message = message;
             Data = data;
         }
     }

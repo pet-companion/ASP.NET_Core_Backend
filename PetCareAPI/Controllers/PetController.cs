@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetPetList()
         {
             var res = await _petService.GetPetList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -33,7 +34,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetPet(int petId)
         {
             var res = await _petService.GetPet(petId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -41,10 +42,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPet([FromForm] AddUpdatePetDto petData)
+        public async Task<IActionResult> AddPet([FromForm] AddPetDto petData)
         {
-            var res = await _petService.AddUpdatePet(petData);
-            if (res.status)
+            var res = await _petService.AddPet(petData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -52,10 +53,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdatePet([FromForm] AddUpdatePetDto petData)
+        public async Task<IActionResult> UpdatePet([FromForm] UpdatePetDto petData)
         {
-            var res = await _petService.AddUpdatePet(petData);
-            if (res.status)
+            var res = await _petService.UpdatePet(petData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -66,7 +67,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeletePet(int petId)
         {
             var res = await _petService.DeletePet(petId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

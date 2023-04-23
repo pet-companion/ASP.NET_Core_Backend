@@ -12,7 +12,8 @@ namespace PetCareInfrastructure.Services.Interfaces
     {
         Task<APIResponse<List<OrderVM>>> GetOrderList();
         Task<APIResponse<OrderVM>> GetOrder(int orderId);
-        Task<APIResponse> AddUpdateOrder(AddUpdateOrderDto orderData);
+        Task<APIResponse> AddOrder(AddOrderDto orderData);
+        Task<APIResponse> UpdateOrder(UpdateOrderDto orderData);
         Task<APIResponse> DeleteOrder(int orderId);
     }
 }

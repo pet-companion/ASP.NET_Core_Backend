@@ -12,7 +12,8 @@ namespace PetCareInfrastructure.Services.Interfaces
     {
         Task<APIResponse<List<CategoryVM>>> GetCategoryList();
         Task<APIResponse<CategoryVM>> GetCategory(int categoryId);
-        Task<APIResponse> AddUpdateCategory(AddUpdateCategoryDto categoryData);
+        Task<APIResponse> AddCategory(AddCategoryDto categoryData);
+        Task<APIResponse> UpdateCategory(UpdateCategoryDto categoryData);
         Task<APIResponse> DeleteCategory(int categoryId);
     }
 }

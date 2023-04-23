@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> Register([FromForm] AddNewUserDto userData)
         {
             var res = await _authentication.Register(userData);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -36,7 +37,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> Login([FromBody] CredentialDataDto credentialData)
         {
             var res = await _authentication.Login(credentialData);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -48,7 +49,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> ForgotPassword(string userEmail)
         {
             var res = await _authentication.ForgotPassword(userEmail);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -60,7 +61,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ForgotPasswordDto userData)
         {
             var res = await _authentication.ChangePassword(userData);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }

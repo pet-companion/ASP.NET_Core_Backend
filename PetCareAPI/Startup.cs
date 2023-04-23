@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetCareCore.ViewModel;
-using PetCareInfrastructure.Extensions;
+using PetCareInfrastructure.Middleware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,9 +115,9 @@ namespace PetCareAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PetCareAPI v1"));
             }
 
-            //Middelware to handler http requests
-            app.HttpRequestHandler();
-           
+            // Add the middleware to the pipeline
+            app.UseMiddleware<RequestHandlerMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

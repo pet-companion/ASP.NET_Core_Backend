@@ -12,7 +12,8 @@ namespace PetCareInfrastructure.Services.Interfaces
     {
         Task<APIResponse<List<PetVM>>> GetPetList();
         Task<APIResponse<PetVM>> GetPet(int petId);
-        Task<APIResponse> AddUpdatePet(AddUpdatePetDto petData);
+        Task<APIResponse> AddPet(AddPetDto petData);
+        Task<APIResponse> UpdatePet(UpdatePetDto petData);
         Task<APIResponse> DeletePet(int petId);
     }
 }

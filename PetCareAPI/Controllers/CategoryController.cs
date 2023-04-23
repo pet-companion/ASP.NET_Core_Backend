@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetCareCore.Dto;
+using PetCareCore.Enum;
 using PetCareInfrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetCategoryList()
         {
             var res = await _categoryService.GetCategoryList();
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -33,7 +34,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> GetCategory(int categoryId)
         {
             var res = await _categoryService.GetCategory(categoryId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -41,10 +42,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory([FromBody] AddUpdateCategoryDto categoryData)
+        public async Task<IActionResult> AddCategory([FromBody] AddCategoryDto categoryData)
         {
-            var res = await _categoryService.AddUpdateCategory(categoryData);
-            if (res.status)
+            var res = await _categoryService.AddCategory(categoryData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -52,10 +53,10 @@ namespace PetCareAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCategory([FromBody] AddUpdateCategoryDto categoryData)
+        public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryDto categoryData)
         {
-            var res = await _categoryService.AddUpdateCategory(categoryData);
-            if (res.status)
+            var res = await _categoryService.UpdateCategory(categoryData);
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
@@ -66,7 +67,7 @@ namespace PetCareAPI.Controllers
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             var res = await _categoryService.DeleteCategory(categoryId);
-            if (res.status)
+            if (res.Status == StatusMessageEnum.Success.ToDisplayName())
             {
                 return Ok(res);
             }
